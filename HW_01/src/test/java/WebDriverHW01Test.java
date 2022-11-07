@@ -18,10 +18,11 @@ public class WebDriverHW01Test {
 
     // Чтение передаваемого параметра browser (-Dbrowser)
     String env = System.getProperty("browser", "chrome");
+    String pageLoadStrategy = System.getProperty("loadstrategy", "normal");
 
     @BeforeEach
     public void setUp() {
-        driver = WebDriverFactory.getDriver(env.toLowerCase());
+        driver = WebDriverFactory.getDriver(env.toLowerCase(), pageLoadStrategy);
         logger.info("Драйвер стартовал!");
     }
 
@@ -62,26 +63,26 @@ public class WebDriverHW01Test {
             e.printStackTrace();
         }
 
-        WebElement link1 = driver.findElement(By.linkText("Бытовая техника"));
-        link1.click();
+        WebElement linkAppliances = driver.findElement(By.linkText("Бытовая техника"));
+        linkAppliances.click();
 
-        WebElement pageTitle1 = driver.findElement(By.className("subcategory__page-title"));
-        String textPageTitle1 = pageTitle1.getText();
-        logger.info("Отображаемый текст: " + textPageTitle1);
-        Assertions.assertTrue(textPageTitle1.equals("Бытовая техника"), "Текст Бытовая техника не отображается");
+        WebElement pageTitleAppliances = driver.findElement(By.className("subcategory__page-title"));
+        String textPageTitleAppliances = pageTitleAppliances.getText();
+        logger.info("Отображаемый текст: " + textPageTitleAppliances);
+        Assertions.assertEquals("Бытовая техника", textPageTitleAppliances, "Текст Бытовая техника не отображается");
 
-        WebElement link2 = driver.findElement(By.xpath("//span[text() = 'Техника для кухни']"));
-        link2.click();
+        WebElement linkKitchenAppliances = driver.findElement(By.xpath("//span[text() = 'Техника для кухни']"));
+        linkKitchenAppliances.click();
 
-        WebElement pageTitle2 = driver.findElement(By.className("subcategory__page-title"));
-        String textPageTitle2 = pageTitle2.getText();
-        logger.info("Отображаемый текст: " + textPageTitle2);
-        Assertions.assertTrue(textPageTitle2.equals("Техника для кухни"), "Текст Техника для кухни не отображается");
+        WebElement pageTitleKitchenAppliances = driver.findElement(By.className("subcategory__page-title"));
+        String textPageTitleKitchenAppliances = pageTitleKitchenAppliances.getText();
+        logger.info("Отображаемый текст: " + textPageTitleKitchenAppliances);
+        Assertions.assertEquals("Техника для кухни", textPageTitleKitchenAppliances, "Текст Техника для кухни не отображается");
 
-        WebElement link3 = driver.findElement(By.xpath("//a[@class = 'button-ui button-ui_white configurator-links-block__links-link']"));
-        String textLink3 = link3.getText();
-        logger.info("Отображаемая ссылка: " + textLink3);
-        Assertions.assertTrue(textLink3.equals("Собрать свою кухню"), "Ссылка Собрать свою кухню не отображается");
+        WebElement linkAssembleYourKitchen = driver.findElement(By.xpath("//a[@class = 'button-ui button-ui_white configurator-links-block__links-link']"));
+        String textLinkAssembleYourKitchen = linkAssembleYourKitchen.getText();
+        logger.info("Отображаемая ссылка: " + textLinkAssembleYourKitchen);
+        Assertions.assertEquals("Собрать свою кухню", textLinkAssembleYourKitchen, "Ссылка Собрать свою кухню не отображается");
 
         List<WebElement> categories = driver.findElements(By.className("subcategory__title"));
         for (WebElement category : categories) {
@@ -110,9 +111,9 @@ public class WebDriverHW01Test {
             e.printStackTrace();
         }
 
-        WebElement link1 = driver.findElement(By.linkText("Бытовая техника"));
+        WebElement linkAppliances = driver.findElement(By.linkText("Бытовая техника"));
         Actions actions = new Actions(driver);
-        actions.moveToElement(link1).perform();
+        actions.moveToElement(linkAppliances).perform();
 
         try {
             Thread.sleep(3000);
@@ -128,8 +129,8 @@ public class WebDriverHW01Test {
             Assertions.assertTrue(linksTextTest.contains(linkName), "Ссылка отображается неверно");
         }
 
-        WebElement link2 = driver.findElement(By.xpath("//a[text()='Приготовление пищи']"));
-        actions.moveToElement(link2).perform();
+        WebElement linkCooking = driver.findElement(By.xpath("//a[text()='Приготовление пищи']"));
+        actions.moveToElement(linkCooking).perform();
 
         try {
             Thread.sleep(3000);
@@ -137,18 +138,18 @@ public class WebDriverHW01Test {
             e.printStackTrace();
         }
 
-        WebElement link3 = driver.findElement(By.xpath("//span[@class='menu-desktop__popup'][1]"));
-        int link3Count = Integer.parseInt(link3.getAttribute("childElementCount"));
+        WebElement linkSubMenuCooking = driver.findElement(By.xpath("//span[@class='menu-desktop__popup'][1]"));
+        int link3Count = Integer.parseInt(linkSubMenuCooking.getAttribute("childElementCount"));
         logger.info(String.format("Количество ссылок: %d", link3Count));
         Assertions.assertTrue(link3Count > 5, "Количество ссылок в подменю Приготовление пищи меньше 5");
 
-        WebElement link4 = driver.findElement(By.xpath("//a[text() = 'Плиты']"));
-        actions.moveToElement(link4).perform();
+        WebElement linkStoves = driver.findElement(By.xpath("//a[text() = 'Плиты']"));
+        actions.moveToElement(linkStoves).perform();
 
-        link4.click();
+        linkStoves.click();
 
-        WebElement link5 = driver.findElement(By.xpath("//span[text() = 'Плиты электрические']"));
-        link5.click();
+        WebElement linkElectricStoves = driver.findElement(By.xpath("//span[text() = 'Плиты электрические']"));
+        linkElectricStoves.click();
 
         WebElement productCountTitle = driver.findElement(By.className("products-count"));
         String productCountText = productCountTitle.getText();
