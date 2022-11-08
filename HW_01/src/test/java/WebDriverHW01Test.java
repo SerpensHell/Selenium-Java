@@ -22,7 +22,7 @@ public class WebDriverHW01Test {
 
     @BeforeEach
     public void setUp() {
-        driver = WebDriverFactory.getDriver(env.toLowerCase(), pageLoadStrategy);
+        driver = WebDriverFactory.getDriver( env.toLowerCase(), pageLoadStrategy.toLowerCase());
         logger.info("Драйвер стартовал!");
     }
 

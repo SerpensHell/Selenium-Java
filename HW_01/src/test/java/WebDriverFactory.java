@@ -8,10 +8,22 @@ import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxOptions;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class WebDriverFactory {
     private static Logger logger = LogManager.getLogger(WebDriverFactory.class);
 
     public static WebDriver getDriver(String browserName, String pageLoadStrategy) {
+        List<String> pageLoadStrategyList = Arrays.asList("normal", "eager", "none");
+        if (!pageLoadStrategyList.contains(pageLoadStrategy)){
+            String temp = browserName;
+            browserName = pageLoadStrategy;
+            pageLoadStrategy = temp;
+            if (!pageLoadStrategyList.contains(pageLoadStrategy)) {
+                throw new RuntimeException("Введены неккоректные значения параметров");
+            }
+        }
         switch (browserName) {
             case "chrome":
                 WebDriverManager.chromedriver().setup();
