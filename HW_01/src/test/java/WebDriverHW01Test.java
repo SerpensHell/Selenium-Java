@@ -5,9 +5,19 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
+import ru.yandex.qatools.ashot.AShot;
+import ru.yandex.qatools.ashot.Screenshot;
+import ru.yandex.qatools.ashot.shooting.ShootingStrategies;
+
+import javax.imageio.ImageIO;
+import java.io.File;
+import java.io.IOException;
 import java.time.Duration;
 import java.util.Arrays;
 import java.util.List;
@@ -22,7 +32,7 @@ public class WebDriverHW01Test {
 
     @BeforeEach
     public void setUp() {
-        driver = WebDriverFactory.getDriver( env.toLowerCase(), pageLoadStrategy.toLowerCase());
+        driver = WebDriverFactory.getDriver(env.toLowerCase(), pageLoadStrategy.toLowerCase());
         logger.info("Драйвер стартовал!");
     }
 
@@ -36,7 +46,9 @@ public class WebDriverHW01Test {
 
     @Test
     public void testCaseOne() {
-        driver.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(100));
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+        JavascriptExecutor js = (JavascriptExecutor) driver;
+
         driver.get("https://www.dns-shop.ru/");
         logger.info("Открыта страница DNS - " + "https://www.dns-shop.ru/");
 
@@ -53,38 +65,73 @@ public class WebDriverHW01Test {
         logger.info(String.format("Высота окна: %d", windowHeight));
 
         //Подтверждение города, для предостваления доступа к ссылке "Бытовая техника"
-        WebElement cityConfirm = driver.findElement(By.xpath("//span[text()='Всё верно'][1]"));
+        By cityConfirmXpath = By.xpath("//span[text()='Всё верно'][1]");
+        wait.until(ExpectedConditions.visibilityOfElementLocated(cityConfirmXpath));
+        WebElement cityConfirm = driver.findElement(cityConfirmXpath);
+        wait.until(ExpectedConditions.elementToBeClickable(cityConfirm));
         cityConfirm.click();
-
-        //Ожидание загрузки элементов страницы, после перезагрузки
         try {
-            Thread.sleep(5000);
-        } catch (InterruptedException e) {
+            Screenshot screenshot = new AShot().shootingStrategy(ShootingStrategies.viewportPasting(700)).takeScreenshot(driver);
+            ImageIO.write(screenshot.getImage(), "png", new File("temp\\DnsMainPageС1.png"));
+        } catch (IOException e) {
             e.printStackTrace();
         }
 
-        WebElement linkAppliances = driver.findElement(By.linkText("Бытовая техника"));
-        linkAppliances.click();
+        js.executeScript("window.scrollTo(0,0)");
 
-        WebElement pageTitleAppliances = driver.findElement(By.className("subcategory__page-title"));
+        By appliancesLinkText = By.linkText("Бытовая техника");
+        wait.until(ExpectedConditions.visibilityOfElementLocated(appliancesLinkText));
+        WebElement linkAppliances = driver.findElement(appliancesLinkText);
+        wait.until(ExpectedConditions.elementToBeClickable(linkAppliances));
+        linkAppliances.click();
+        try {
+            Screenshot screenshot = new AShot().shootingStrategy(ShootingStrategies.viewportPasting(700)).takeScreenshot(driver);
+            ImageIO.write(screenshot.getImage(), "png", new File("temp\\DnsAppliancesPageС1.png"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        js.executeScript("window.scrollTo(0,0)");
+
+        By pageTitleAppliancesClassName = By.className("subcategory__page-title");
+        wait.until(ExpectedConditions.visibilityOfElementLocated(pageTitleAppliancesClassName));
+        WebElement pageTitleAppliances = driver.findElement(pageTitleAppliancesClassName);
         String textPageTitleAppliances = pageTitleAppliances.getText();
         logger.info("Отображаемый текст: " + textPageTitleAppliances);
         Assertions.assertEquals("Бытовая техника", textPageTitleAppliances, "Текст Бытовая техника не отображается");
 
-        WebElement linkKitchenAppliances = driver.findElement(By.xpath("//span[text() = 'Техника для кухни']"));
+        By kitchenAppliancesXpath = By.xpath("//span[text() = 'Техника для кухни']");
+        wait.until(ExpectedConditions.visibilityOfElementLocated(kitchenAppliancesXpath));
+        WebElement linkKitchenAppliances = driver.findElement(kitchenAppliancesXpath);
+        wait.until(ExpectedConditions.elementToBeClickable(linkKitchenAppliances));
         linkKitchenAppliances.click();
+        try {
+            Screenshot screenshot = new AShot().shootingStrategy(ShootingStrategies.viewportPasting(700)).takeScreenshot(driver);
+            ImageIO.write(screenshot.getImage(), "png", new File("temp\\DnsKitchenAppliancesPageС1.png"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
-        WebElement pageTitleKitchenAppliances = driver.findElement(By.className("subcategory__page-title"));
+        js.executeScript("window.scrollTo(0,0)");
+
+        By pageTitleKitchenAppliancesClassName = By.className("subcategory__page-title");
+        wait.until(ExpectedConditions.visibilityOfElementLocated(pageTitleKitchenAppliancesClassName));
+        WebElement pageTitleKitchenAppliances = driver.findElement(pageTitleKitchenAppliancesClassName);
         String textPageTitleKitchenAppliances = pageTitleKitchenAppliances.getText();
         logger.info("Отображаемый текст: " + textPageTitleKitchenAppliances);
         Assertions.assertEquals("Техника для кухни", textPageTitleKitchenAppliances, "Текст Техника для кухни не отображается");
 
-        WebElement linkAssembleYourKitchen = driver.findElement(By.xpath("//a[@class = 'button-ui button-ui_white configurator-links-block__links-link']"));
+        By AssembleYourKitchenXpath = By.xpath("//a[@class = 'button-ui button-ui_white configurator-links-block__links-link']");
+        wait.until(ExpectedConditions.visibilityOfElementLocated(AssembleYourKitchenXpath));
+        WebElement linkAssembleYourKitchen = driver.findElement(AssembleYourKitchenXpath);
         String textLinkAssembleYourKitchen = linkAssembleYourKitchen.getText();
         logger.info("Отображаемая ссылка: " + textLinkAssembleYourKitchen);
         Assertions.assertEquals("Собрать свою кухню", textLinkAssembleYourKitchen, "Ссылка Собрать свою кухню не отображается");
 
-        List<WebElement> categories = driver.findElements(By.className("subcategory__title"));
+
+        By categoriesClassName = By.className("subcategory__title");
+        wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(categoriesClassName));
+        List<WebElement> categories = driver.findElements(categoriesClassName);
         for (WebElement category : categories) {
             String categoryName = category.getText();
             logger.info(categoryName);
@@ -97,70 +144,106 @@ public class WebDriverHW01Test {
 
     @Test
     public void testCaseTwo() {
-        driver.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(100));
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+        Actions actions = new Actions(driver);
+        JavascriptExecutor js = (JavascriptExecutor) driver;
+
         driver.get("https://www.dns-shop.ru/");
         logger.info("Открыта страница DNS - " + "https://www.dns-shop.ru/");
 
         //Подтверждение города, для предостваления доступа к ссылке "Бытовая техника"
-        WebElement cityConfrim = driver.findElement(By.xpath("//span[text()='Всё верно'][1]"));
-        cityConfrim.click();
-        //Ожидание загрузки элементов страницы, после перезагрузки
+        By cityConfirmXpath = By.xpath("//span[text()='Всё верно'][1]");
+        wait.until(ExpectedConditions.visibilityOfElementLocated(cityConfirmXpath));
+        WebElement cityConfirm = driver.findElement(cityConfirmXpath);
+        wait.until(ExpectedConditions.elementToBeClickable(cityConfirm));
+        cityConfirm.click();
         try {
-            Thread.sleep(5000);
-        } catch (InterruptedException e) {
+            Screenshot screenshot = new AShot().shootingStrategy(ShootingStrategies.viewportPasting(700)).takeScreenshot(driver);
+            ImageIO.write(screenshot.getImage(), "png", new File("temp\\DnsMainPageС2.png"));
+        } catch (IOException e) {
             e.printStackTrace();
         }
 
-        WebElement linkAppliances = driver.findElement(By.linkText("Бытовая техника"));
-        Actions actions = new Actions(driver);
+        js.executeScript("window.scrollTo(0,0)");
+
+        By appliancesLinkText = By.linkText("Бытовая техника");
+        wait.until(ExpectedConditions.visibilityOfElementLocated(appliancesLinkText));
+        WebElement linkAppliances = driver.findElement(appliancesLinkText);
         actions.moveToElement(linkAppliances).perform();
-
         try {
-            Thread.sleep(3000);
-        } catch (InterruptedException e) {
+            Screenshot screenshot = new AShot().shootingStrategy(ShootingStrategies.viewportPasting(700)).takeScreenshot(driver);
+            ImageIO.write(screenshot.getImage(), "png", new File("temp\\DnsAppliancesMenuС2.png"));
+        } catch (IOException e) {
             e.printStackTrace();
         }
 
-        List<WebElement> links = driver.findElements(By.xpath("//a[@class ='ui-link menu-desktop__first-level']"));
+        actions.scrollToElement(linkAppliances).perform();
+
+        By menuLinksXpath = By.xpath("//a[@class ='ui-link menu-desktop__first-level']");
+        wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(menuLinksXpath));
+        List<WebElement> menuLinks = driver.findElements(menuLinksXpath);
         List<String> linksTextTest = Arrays.asList("Техника для кухни", "Техника для дома", "Красота и здоровье");
-        for (WebElement link : links) {
+        for (WebElement link : menuLinks) {
             String linkName = link.getText();
             logger.info("Отображаемая ссылка: " + linkName);
             Assertions.assertTrue(linksTextTest.contains(linkName), "Ссылка отображается неверно");
         }
 
-        WebElement linkCooking = driver.findElement(By.xpath("//a[text()='Приготовление пищи']"));
+        By linkCookingXpath = By.xpath("//a[text()='Приготовление пищи']");
+        wait.until(ExpectedConditions.visibilityOfElementLocated(linkCookingXpath));
+        WebElement linkCooking = driver.findElement(linkCookingXpath);
         actions.moveToElement(linkCooking).perform();
-
         try {
-            Thread.sleep(3000);
-        } catch (InterruptedException e) {
+            Screenshot screenshot = new AShot().shootingStrategy(ShootingStrategies.viewportPasting(700)).takeScreenshot(driver);
+            ImageIO.write(screenshot.getImage(), "png", new File("temp\\DnsCookingС2.png"));
+        } catch (IOException e) {
             e.printStackTrace();
         }
 
-        WebElement linkSubMenuCooking = driver.findElement(By.xpath("//span[@class='menu-desktop__popup'][1]"));
-        int link3Count = Integer.parseInt(linkSubMenuCooking.getAttribute("childElementCount"));
-        logger.info(String.format("Количество ссылок: %d", link3Count));
-        Assertions.assertTrue(link3Count > 5, "Количество ссылок в подменю Приготовление пищи меньше 5");
+        actions.scrollToElement(linkAppliances).moveToElement(linkCooking).perform();
 
-        WebElement linkStoves = driver.findElement(By.xpath("//a[text() = 'Плиты']"));
-        actions.moveToElement(linkStoves).perform();
+        By linkSubMenuCookingXpath = By.xpath("//span[@class='menu-desktop__popup'][1]");
+        wait.until(ExpectedConditions.visibilityOfElementLocated(linkSubMenuCookingXpath));
+        WebElement linkSubMenuCooking = driver.findElement(linkSubMenuCookingXpath);
+        int linkSubMenuCount = Integer.parseInt(linkSubMenuCooking.getAttribute("childElementCount"));
+        logger.info(String.format("Количество ссылок: %d", linkSubMenuCount));
+        Assertions.assertTrue(linkSubMenuCount > 5, "Количество ссылок в подменю Приготовление пищи меньше 5");
 
-        linkStoves.click();
 
-        WebElement linkElectricStoves = driver.findElement(By.xpath("//span[text() = 'Плиты электрические']"));
+        By linkStovesXpath = By.xpath("//a[text() = 'Плиты']");
+        wait.until(ExpectedConditions.visibilityOfElementLocated(linkStovesXpath));
+        WebElement linkStoves = driver.findElement(linkStovesXpath);
+        wait.until(ExpectedConditions.elementToBeClickable(linkStoves));
+        actions.moveToElement(linkStoves).click().perform();
+        try {
+            Screenshot screenshot = new AShot().shootingStrategy(ShootingStrategies.viewportPasting(700)).takeScreenshot(driver);
+            ImageIO.write(screenshot.getImage(), "png", new File("temp\\DnsStovesС2.png"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        js.executeScript("window.scrollTo(0,0)");
+
+        By linkElectricStovesXpath = By.xpath("//span[text() = 'Плиты электрические']");
+        wait.until(ExpectedConditions.visibilityOfElementLocated(linkElectricStovesXpath));
+        WebElement linkElectricStoves = driver.findElement(linkElectricStovesXpath);
+        wait.until(ExpectedConditions.elementToBeClickable(linkElectricStoves));
         linkElectricStoves.click();
+        try {
+            Screenshot screenshot = new AShot().shootingStrategy(ShootingStrategies.viewportPasting(700)).takeScreenshot(driver);
+            ImageIO.write(screenshot.getImage(), "png", new File("temp\\DnsElectricStovesС2.png"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
-        WebElement productCountTitle = driver.findElement(By.className("products-count"));
+        js.executeScript("window.scrollTo(0,0)");
+
+        By productCountTitleClassName = By.className("products-count");
+        wait.until(ExpectedConditions.visibilityOfElementLocated(productCountTitleClassName));
+        WebElement productCountTitle = driver.findElement(productCountTitleClassName);
         String productCountText = productCountTitle.getText();
         int productCount = Integer.parseInt(productCountText.substring(0, productCountText.indexOf(" ")));
         logger.info(String.format("Количество товаров: %d", productCount));
         Assertions.assertTrue(productCount > 100, "Количество товаров меньше 100");
-
-        try {
-            Thread.sleep(3000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
     }
 }
